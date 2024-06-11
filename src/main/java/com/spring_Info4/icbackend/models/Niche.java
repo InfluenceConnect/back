@@ -22,16 +22,16 @@ public class Niche implements Serializable {
 	@Column(name = "niche_id")
 	private Long id;
 
-	@Size(min = 0, max = 100, message = "Fill in this field the description.")
-	@Column(name = "niche_description")
-	private String description;
+	@Size(min = 0, max = 100, message = "Fill in this field the name.")
+	@Column(name = "niche_name")
+	private String name;
 
 	// Constructor
 	public Niche() {
 	}
 
-	public Niche(String description) {
-		this.description = description;
+	public Niche(String name) {
+		this.name = name;
 
 	}
 
@@ -46,11 +46,11 @@ public class Niche implements Serializable {
 	}
 
 	public String getDescription() {
-		return description;
+		return name;
 	}
 
-	public void setDescription(String description) {
-		this.description = description;
+	public void setDescription(String name) {
+		this.name = name;
 	}
 
 }
