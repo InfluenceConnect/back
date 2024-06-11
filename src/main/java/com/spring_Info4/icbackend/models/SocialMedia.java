@@ -12,7 +12,7 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 
 @Entity
-@Table(name = "socialmedia")
+@Table(name = "socialmedias")
 public class SocialMedia implements Serializable {
 
 	private static final long serialVersionUID = 1L;
