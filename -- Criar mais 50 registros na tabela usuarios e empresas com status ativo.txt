@@ -1,0 +1,68 @@
+-- Criar mais 50 registros na tabela usuarios e empresas com status "ativo"
+
+WITH new_users AS (
+    INSERT INTO public.usuarios (nome_usuario, email_usuario, senha_usuario, login_usuario, id_role)
+    VALUES 
+        ('Empresa 51', 'empresa51@mail.com', 'senha51', 'empresa51', 2),
+        ('Empresa 52', 'empresa52@mail.com', 'senha52', 'empresa52', 2),
+        ('Empresa 53', 'empresa53@mail.com', 'senha53', 'empresa53', 2),
+        ('Empresa 54', 'empresa54@mail.com', 'senha54', 'empresa54', 2),
+        ('Empresa 55', 'empresa55@mail.com', 'senha55', 'empresa55', 2),
+        ('Empresa 56', 'empresa56@mail.com', 'senha56', 'empresa56', 2),
+        ('Empresa 57', 'empresa57@mail.com', 'senha57', 'empresa57', 2),
+        ('Empresa 58', 'empresa58@mail.com', 'senha58', 'empresa58', 2),
+        ('Empresa 59', 'empresa59@mail.com', 'senha59', 'empresa59', 2),
+        ('Empresa 60', 'empresa60@mail.com', 'senha60', 'empresa60', 2),
+        ('Empresa 61', 'empresa61@mail.com', 'senha61', 'empresa61', 2),
+        ('Empresa 62', 'empresa62@mail.com', 'senha62', 'empresa62', 2),
+        ('Empresa 63', 'empresa63@mail.com', 'senha63', 'empresa63', 2),
+        ('Empresa 64', 'empresa64@mail.com', 'senha64', 'empresa64', 2),
+        ('Empresa 65', 'empresa65@mail.com', 'senha65', 'empresa65', 2),
+        ('Empresa 66', 'empresa66@mail.com', 'senha66', 'empresa66', 2),
+        ('Empresa 67', 'empresa67@mail.com', 'senha67', 'empresa67', 2),
+        ('Empresa 68', 'empresa68@mail.com', 'senha68', 'empresa68', 2),
+        ('Empresa 69', 'empresa69@mail.com', 'senha69', 'empresa69', 2),
+        ('Empresa 70', 'empresa70@mail.com', 'senha70', 'empresa70', 2),
+        ('Empresa 71', 'empresa71@mail.com', 'senha71', 'empresa71', 2),
+        ('Empresa 72', 'empresa72@mail.com', 'senha72', 'empresa72', 2),
+        ('Empresa 73', 'empresa73@mail.com', 'senha73', 'empresa73', 2),
+        ('Empresa 74', 'empresa74@mail.com', 'senha74', 'empresa74', 2),
+        ('Empresa 75', 'empresa75@mail.com', 'senha75', 'empresa75', 2),
+        ('Empresa 76', 'empresa76@mail.com', 'senha76', 'empresa76', 2),
+        ('Empresa 77', 'empresa77@mail.com', 'senha77', 'empresa77', 2),
+        ('Empresa 78', 'empresa78@mail.com', 'senha78', 'empresa78', 2),
+        ('Empresa 79', 'empresa79@mail.com', 'senha79', 'empresa79', 2),
+        ('Empresa 80', 'empresa80@mail.com', 'senha80', 'empresa80', 2),
+        ('Empresa 81', 'empresa81@mail.com', 'senha81', 'empresa81', 2),
+        ('Empresa 82', 'empresa82@mail.com', 'senha82', 'empresa82', 2),
+        ('Empresa 83', 'empresa83@mail.com', 'senha83', 'empresa83', 2),
+        ('Empresa 84', 'empresa84@mail.com', 'senha84', 'empresa84', 2),
+        ('Empresa 85', 'empresa85@mail.com', 'senha85', 'empresa85', 2),
+        ('Empresa 86', 'empresa86@mail.com', 'senha86', 'empresa86', 2),
+        ('Empresa 87', 'empresa87@mail.com', 'senha87', 'empresa87', 2),
+        ('Empresa 88', 'empresa88@mail.com', 'senha88', 'empresa88', 2),
+        ('Empresa 89', 'empresa89@mail.com', 'senha89', 'empresa89', 2),
+        ('Empresa 90', 'empresa90@mail.com', 'senha90', 'empresa90', 2),
+        ('Empresa 91', 'empresa91@mail.com', 'senha91', 'empresa91', 2),
+        ('Empresa 92', 'empresa92@mail.com', 'senha92', 'empresa92', 2),
+        ('Empresa 93', 'empresa93@mail.com', 'senha93', 'empresa93', 2),
+        ('Empresa 94', 'empresa94@mail.com', 'senha94', 'empresa94', 2),
+        ('Empresa 95', 'empresa95@mail.com', 'senha95', 'empresa95', 2),
+        ('Empresa 96', 'empresa96@mail.com', 'senha96', 'empresa96', 2),
+        ('Empresa 97', 'empresa97@mail.com', 'senha97', 'empresa97', 2),
+        ('Empresa 98', 'empresa98@mail.com', 'senha98', 'empresa98', 2),
+        ('Empresa 99', 'empresa99@mail.com', 'senha99', 'empresa99', 2),
+        ('Empresa 100', 'empresa100@mail.com', 'senha100', 'empresa100', 2)
+    RETURNING id_usuario
+)
+
+-- Query para inserir os novos usuários na tabela empresas com status "ativo"
+INSERT INTO public.empresas (id_usuario, nome_empresa, logo_empresa, cnpj_empresa, login_empresa, senha_empresa, status_empresa)
+SELECT id_usuario, 
+       'Empresa ' || (50 + row_number() OVER (ORDER BY id_usuario)), 
+       'logo_empresa' || (50 + row_number() OVER (ORDER BY id_usuario)) || '.jpg', 
+       '12.345.678/0002-' || LPAD((50 + row_number() OVER (ORDER BY id_usuario))::TEXT, 2, '0'), 
+       'empresa' || (50 + row_number() OVER (ORDER BY id_usuario)), 
+       'senha' || (50 + row_number() OVER (ORDER BY id_usuario)), 
+       'ativo'
+FROM new_users;

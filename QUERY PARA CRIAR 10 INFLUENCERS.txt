@@ -1,0 +1,28 @@
+-- Criar mais 20 registros na tabela usuarios e influenciadores com status "em análise"
+
+WITH new_users AS (
+    INSERT INTO public.usuarios (nome_usuario, email_usuario, senha_usuario, login_usuario, id_role)
+    VALUES 
+        ('Influenciador 11', 'influenciador11@mail.com', 'senha11', 'influenciador11', 2),
+        ('Influenciador 12', 'influenciador12@mail.com', 'senha12', 'influenciador12', 2),
+        ('Influenciador 13', 'influenciador13@mail.com', 'senha13', 'influenciador13', 2),
+        ('Influenciador 14', 'influenciador14@mail.com', 'senha14', 'influenciador14', 2),
+        ('Influenciador 15', 'influenciador15@mail.com', 'senha15', 'influenciador15', 2),
+        ('Influenciador 16', 'influenciador16@mail.com', 'senha16', 'influenciador16', 2),
+        ('Influenciador 17', 'influenciador17@mail.com', 'senha17', 'influenciador17', 2),
+        ('Influenciador 18', 'influenciador18@mail.com', 'senha18', 'influenciador18', 2),
+        ('Influenciador 19', 'influenciador19@mail.com', 'senha19', 'influenciador19', 2),
+        ('Influenciador 20', 'influenciador20@mail.com', 'senha20', 'influenciador20', 2)
+    RETURNING id_usuario
+)
+
+-- Query para inserir os novos usuários na tabela influenciadores com status "em análise"
+INSERT INTO public.influenciadores (id_usuario, foto_influenciador, cpf_influenciador, estado_influenciador, data_nascimento_influenciador, redes_sociais_influenciador, status_influenciador)
+SELECT id_usuario, 
+       'foto_influenciador' || (10 + row_number() OVER (ORDER BY id_usuario)) || '.jpg', 
+       CONCAT(1234567890 + row_number() OVER (ORDER BY id_usuario)), -- Remover caracteres especiais do CPF
+       'SP', 
+       '2000-01-01', 
+       ARRAY['facebook' || (10 + row_number() OVER (ORDER BY id_usuario)), 'instagram' || (10 + row_number() OVER (ORDER BY id_usuario))], 
+       'em analise'
+FROM new_users;

@@ -1,0 +1,4 @@
+--QUERY PARA SELECIONAR OS TIPOS DE ROLES NA TABELA ROLE
+
+
+SELECT * FROM pg_enum WHERE enumtypid = 'type_role_enum'::regtype;

@@ -1,0 +1,13 @@
+--QUERY PARA CRIAR UM USUÁRIO
+
+WITH new_user AS (
+    INSERT INTO public.usuarios (nome_usuario, email_usuario, senha_usuario, login_usuario, id_role)
+    VALUES ('maria dos santos', 'wetwem@m.com', 'senha123', 'am', 1)
+    RETURNING id_usuario
+)
+
+--QUERY PARA TRAZER O USUÁRIO CRIADO COM A ROLE 1 PARA A TABELA ADMINISTRADOR ATRAVÉS DA ID_USUARIO
+INSERT INTO public.administradores (id_usuario, cpf_administrador)
+SELECT id_usuario, '222.456.789-00'
+FROM new_user;
+

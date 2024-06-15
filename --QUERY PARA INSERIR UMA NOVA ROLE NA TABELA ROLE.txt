@@ -1,0 +1,20 @@
+--QUERY PARA INSERIR UMA NOVA ROLE NA TABELA ROLE
+
+INSERT INTO public.roles(
+	id_role, type_role)
+	VALUES (1,'ADMINISTRADOR');
+
+
+INSERT INTO public.roles(
+	id_role, type_role)
+	VALUES (2,'EMPRESA');
+
+
+INSERT INTO public.roles(
+	id_role, type_role)
+	VALUES (3,'INFLUENCIADOR');
+
+
+
+
+

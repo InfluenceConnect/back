@@ -1,0 +1,121 @@
+--QUERY QUE CRIA O BANCO DE DADOS COMPLETO
+
+-- Criar tipos ENUM
+CREATE TYPE type_role_enum AS ENUM ('ADMINISTRADOR', 'EMPRESA', 'INFLUENCIADOR');
+CREATE TYPE status_influenciador_enum AS ENUM ('em analise', 'ativo', 'inativo');
+CREATE TYPE status_campanha_enum AS ENUM ('ativa', 'pausada', 'encerrada');
+CREATE TYPE status_empresa_enum AS ENUM ('em analise', 'ativo', 'inativo');
+
+-- Tabela roles
+CREATE TABLE roles (
+    id_role SERIAL PRIMARY KEY,
+    type_role type_role_enum NOT NULL
+);
+
+-- Tabela usuarios
+CREATE TABLE usuarios (
+    id_usuario SERIAL PRIMARY KEY,
+    nome_usuario VARCHAR(255) NOT NULL,
+    email_usuario VARCHAR(255) NOT NULL UNIQUE,
+    senha_usuario VARCHAR(255) NOT NULL,
+    login_usuario VARCHAR(50) NOT NULL UNIQUE,
+    id_role INTEGER NOT NULL,
+    FOREIGN KEY (id_role) REFERENCES roles(id_role)
+);
+
+-- Tabela administradores
+CREATE TABLE administradores (
+    id_usuario INTEGER PRIMARY KEY,
+    cpf_administrador VARCHAR(14) NOT NULL UNIQUE,
+   FOREIGN KEY (id_usuario) REFERENCES usuarios(id_usuario) ON DELETE CASCADE
+);
+
+-- Tabela influenciadores
+CREATE TABLE influenciadores (
+    id_usuario INTEGER PRIMARY KEY,
+    foto_influenciador TEXT,
+    cpf_influenciador VARCHAR(14) NOT NULL UNIQUE,
+    estado_influenciador VARCHAR(2) NOT NULL,
+    data_nascimento_influenciador DATE NOT NULL,
+    redes_sociais_influenciador TEXT[] NOT NULL,
+    status_influenciador status_influenciador_enum NOT NULL,
+    FOREIGN KEY (id_usuario) REFERENCES usuarios(id_usuario) ON DELETE CASCADE
+);
+
+-- Tabela empresas
+CREATE TABLE empresas (
+    id_usuario INTEGER PRIMARY KEY,
+    nome_empresa VARCHAR(255) NOT NULL,
+    logo_empresa TEXT,
+    cnpj_empresa VARCHAR(18) NOT NULL UNIQUE,
+    login_empresa VARCHAR(50) NOT NULL UNIQUE,
+    senha_empresa VARCHAR(255) NOT NULL,
+    status_empresa status_empresa_enum NOT NULL,
+    FOREIGN KEY (id_usuario) REFERENCES usuarios(id_usuario) ON DELETE CASCADE
+);
+
+-- Tabela campanhas
+CREATE TABLE campanhas (
+    id_campanha SERIAL PRIMARY KEY,
+    nome_campanha VARCHAR(255) NOT NULL,
+    data_inicio_campanha DATE NOT NULL,
+    data_fim_campanha DATE NOT NULL,
+    descricao_campanha TEXT,
+    canais_marketing_campanha TEXT[] NOT NULL,
+    status_campanha status_campanha_enum NOT NULL,
+    orcamento_campanha NUMERIC(15, 2) NOT NULL,
+    expectativas_curtidas_campanha INTEGER,
+    expectativas_comentarios_campanha INTEGER,
+    expectativas_salvamentos_campanha INTEGER
+);
+
+-- Tabela nichos
+CREATE TABLE nichos (
+    id_nicho SERIAL PRIMARY KEY,
+    nome_nicho VARCHAR(255) NOT NULL
+);
+
+-- Tabela de relação N para N: nichos e influenciadores
+CREATE TABLE nichos_influenciadores (
+    id_nicho INTEGER NOT NULL,
+    id_influenciador INTEGER NOT NULL,
+    PRIMARY KEY (id_nicho, id_influenciador),
+    FOREIGN KEY (id_nicho) REFERENCES nichos(id_nicho) ON DELETE CASCADE,
+    FOREIGN KEY (id_influenciador) REFERENCES influenciadores(id_usuario) ON DELETE CASCADE
+);
+
+-- Tabela de relação N para N: nichos e empresas
+CREATE TABLE nichos_empresas (
+    id_nicho INTEGER NOT NULL,
+    id_empresa INTEGER NOT NULL,
+    PRIMARY KEY (id_nicho, id_empresa),
+    FOREIGN KEY (id_nicho) REFERENCES nichos(id_nicho) ON DELETE CASCADE,
+    FOREIGN KEY (id_empresa) REFERENCES empresas(id_usuario) ON DELETE CASCADE
+);
+
+-- Tabela de relação N para N: nichos e campanhas
+CREATE TABLE nichos_campanhas (
+    id_nicho INTEGER NOT NULL,
+    id_campanha INTEGER NOT NULL,
+    PRIMARY KEY (id_nicho, id_campanha),
+    FOREIGN KEY (id_nicho) REFERENCES nichos(id_nicho) ON DELETE CASCADE,
+    FOREIGN KEY (id_campanha) REFERENCES campanhas(id_campanha) ON DELETE CASCADE
+);
+
+-- Tabela de relação N para N: campanhas e empresas
+CREATE TABLE campanhas_empresas (
+    id_campanha INTEGER NOT NULL,
+    id_empresa INTEGER NOT NULL,
+    PRIMARY KEY (id_campanha, id_empresa),
+    FOREIGN KEY (id_campanha) REFERENCES campanhas(id_campanha) ON DELETE CASCADE,
+    FOREIGN KEY (id_empresa) REFERENCES empresas(id_usuario) ON DELETE CASCADE
+);
+
+-- Tabela de relação N para N: campanhas e influenciadores
+CREATE TABLE campanhas_influenciadores (
+    id_campanha INTEGER NOT NULL,
+    id_influenciador INTEGER NOT NULL,
+    PRIMARY KEY (id_campanha, id_influenciador),
+    FOREIGN KEY (id_campanha) REFERENCES campanhas(id_campanha) ON DELETE CASCADE,
+    FOREIGN KEY (id_influenciador) REFERENCES influenciadores(id_usuario) ON DELETE CASCADE
+);
