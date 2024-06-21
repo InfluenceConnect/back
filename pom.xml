@@ -18,6 +18,13 @@
 		<java.version>17</java.version>
 	</properties>
 	<dependencies>
+
+		<!-- Bcrypt-->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-security</artifactId>
+		</dependency>
+		<!-- conversor de DTO/Entity e vice-versa-->
 		<dependency>
 			<groupId>org.modelmapper</groupId>
 			<artifactId>modelmapper</artifactId>
@@ -39,6 +46,7 @@
 			<scope>runtime</scope>
 			<optional>true</optional>
 		</dependency>
+		<!-- módulo que usa o postgres para criar as entidades no banco via springboot-->
 		<dependency>
 			<groupId>org.postgresql</groupId>
 			<artifactId>postgresql</artifactId>

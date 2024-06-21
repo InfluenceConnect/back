@@ -1,5 +1,6 @@
 package com.senac.influenceconnect.services;
 
+import java.sql.SQLDataException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -8,6 +9,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataAccessException;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
@@ -31,8 +33,10 @@ import com.senac.influenceconnect.repositories.RoleRepository;
 import com.senac.influenceconnect.repositories.SocialMediaRepository;
 import com.senac.influenceconnect.repositories.StateRepository;
 import com.senac.influenceconnect.repositories.UserRepository;
+import com.senac.influenceconnect.utils.Bcrypt;
 
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.transaction.Transactional;
 
 @Service
 public class InfluencerService {
@@ -51,11 +55,14 @@ public class InfluencerService {
 	private RoleRepository roleRepo;
 	@Autowired
 	private CampaignRepository campaignRepo;
-	
+	 @Autowired
+	private Bcrypt bcrypt;
+	 
+	@Transactional
 	public InfluencerDTO registerInfluencer(InfluencerDTO iDTO) {
 		Influencer inf = new Influencer();
 		copyInfluencerDTO(iDTO, inf);
-		
+		   inf.getUser().setPassword(bcrypt.hashPassword(iDTO.getPassword()));
 		Influencer newInf = influenceRepo.save(inf);
 		return new InfluencerDTO(newInf);
 	}
@@ -102,12 +109,13 @@ public class InfluencerService {
 	    }
 	}
 	
+	@Transactional
 	public InfluencerDTO updateInfluencer(long id, InfluencerDTO iDTO) {
 		Influencer inf = influenceRepo.getReferenceById(id);
 		
 		inf.getUser().setEmail(iDTO.getEmail());
 		inf.getUser().setName(iDTO.getName());
-		inf.getUser().setPassword(iDTO.getPassword());
+		inf.getUser().setPassword(bcrypt.hashPassword(iDTO.getPassword())); //Encripta a senha ao atualizar.
 		inf.setBirthdate(iDTO.getBirthdate());
 		inf.setProfilePhoto(iDTO.getProfilePhoto());
 		inf.setCpf(iDTO.getCpf());
@@ -136,7 +144,14 @@ public class InfluencerService {
 		Influencer inf = influenceRepo.getReferenceById(id);
 		
 		inf.setStatus(statusType);
-		campaignRepo.deleteInfluencerFromCampaigns(inf.getId());
+		
+		try {
+			campaignRepo.deleteInfluencerFromCampaigns(inf.getId());
+		} catch (DataAccessException e) {
+			System.out.println("Error deleting influencer from Campaigns");
+			System.out.println(e.getMessage());
+		}
+		
 		
         influenceRepo.save(inf);
         

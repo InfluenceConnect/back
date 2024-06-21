@@ -22,6 +22,8 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+
 
 @Entity
 @Table(name="tb_influencers")
@@ -91,6 +93,7 @@ public class Influencer {
 		this.state = state;
 		this.niches = niches;
 		this.influencerSocialMedia = influencerSocialMedia;
+		encodePassword(user.getPassword());
 	}
 
 	public Long getId() {
@@ -107,6 +110,7 @@ public class Influencer {
 
 	public void setUser(User user) {
 		this.user = user;
+		encodePassword(user.getPassword());
 	}
 
 	public LocalDate getBirthdate() {
@@ -172,4 +176,9 @@ public class Influencer {
 	public void setCampaigns(Set<Campaign> campaigns) {
 		this.campaigns = campaigns;
 	}
+	
+	private void encodePassword(String password) {
+        BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+        this.user.setPassword(passwordEncoder.encode(password));
+    } 
 }

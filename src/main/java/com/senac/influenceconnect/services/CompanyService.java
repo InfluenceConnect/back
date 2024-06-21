@@ -23,6 +23,7 @@ import com.senac.influenceconnect.repositories.CompanyRepository;
 import com.senac.influenceconnect.repositories.MarketingChannelRepository;
 import com.senac.influenceconnect.repositories.NicheRepository;
 import com.senac.influenceconnect.repositories.RoleRepository;
+import com.senac.influenceconnect.utils.Bcrypt;
 
 import jakarta.persistence.EntityNotFoundException;
 
@@ -37,9 +38,13 @@ public class CompanyService {
 	private NicheRepository nicheRepo;
 	@Autowired
 	private MarketingChannelRepository markChannelRepo;
+	 @Autowired
+	    private Bcrypt bcrypt;
 	
 	public CompanyDTO createCompany(CompanyDTO companyDTO) {
         Company newCompany = transformDTO_intoEntity(companyDTO);
+        String hashedPassword = bcrypt.hashPassword(newCompany.getUser().getPassword());
+        newCompany.getUser().setPassword(hashedPassword);
         Company savedComp = companyRepo.save(newCompany);
         savedComp.getUser().setPassword(null);
         
@@ -117,8 +122,12 @@ public class CompanyService {
         c.setProfileLogo(companyDTO.getProfileLogo());
         c.getUser().setEmail(companyDTO.getEmail());
         c.getUser().setName(companyDTO.getName());
-        c.getUser().setPassword(companyDTO.getPassword());
-        
+        // Verifica se a senha foi alterada
+        if (!companyDTO.getPassword().equals(c.getUser().getPassword())) {
+            // Codifica a nova senha com Bcrypt
+            String hashedPassword = bcrypt.hashPassword(companyDTO.getPassword());
+            c.getUser().setPassword(hashedPassword);
+        }
         Set<Niche> niches = new HashSet<Niche>();
         for( long idNiche: companyDTO.getNicheIds()) {
         	Niche niche = nicheRepo.getReferenceById(idNiche);
